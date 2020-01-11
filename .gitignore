@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+
+
+#Custom Ignores
+Sample Data*
+web-api-auth-examples
+*.txt
+auth_app.js
+*lock*
