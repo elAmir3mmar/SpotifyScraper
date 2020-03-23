@@ -109,6 +109,14 @@ app.get('/callback', function(req, res) {
             access_token: access_token,
             refresh_token: refresh_token
           }));
+        
+        console.log("AT: "+access_token);
+        console.log("RT: "+refresh_token);
+
+        return {
+          "access_token": access_token,
+          "refresh_token": refresh_token
+        };
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -139,6 +147,8 @@ app.get('/refresh_token', function(req, res) {
       res.send({
         'access_token': access_token
       });
+      console.log("AT2: "+access_token);
+      return {"access_token" : access_token};
     }
   });
 });
