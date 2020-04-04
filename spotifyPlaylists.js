@@ -4,8 +4,36 @@ var request = require("request");
 // var rimraf = require("rimraf");
 // var auth = require("./authorization_code/app.js");
 
+// Read input args (should be one access token )
+// argv == [node, script path, ... ]
+// console.log(process.argv)
+// process.argv.forEach(function (val, index, array) {
+// 	console.log(index + ': ' + val);
+// });
+
+var accessToken = null;
+
+if (process.argv[2] != null) {
+	console.log("Input arg: " + process.argv[2]);
+	accessToken =  process.argv[2];
+
+	fs.writeFile('curAccessToken', accessToken, function(err){
+		if (err) throw err && console.log("Error writing access token to file.");
+		console.log("Updated access token file.");
+	});
+}
+else {
+	fs.readFile('curAccessToken', (err, data) => { 
+		if (err) throw err; 
+
+		console.log("retrieved currAccessToken: " + data.toString()); 
+		accessToken = data.toString();
+	});
+}
+
 var userID = "ammarelamir";
-var token = "Bearer  BQD5nCK4BjsKJ-uB6EqFPOw-DgCYnsjKOiEjIJrdFJnbGDe_qE_8pOahvp_RLZabibCTIn7xIqE4MYJ1l5c-fJV5dEIBaisPcgRfIpXcWVLTRz1Zk6VbOScAiflJviwgLt8acJi8zBLV_KpwTt-pb0p1eKoqpDFwuVgfViOMeNLFCTVOLohw3w";
+// var token = "Bearer  BQD5nCK4BjsKJ-uB6EqFPOw-DgCYnsjKOiEjIJrdFJnbGDe_qE_8pOahvp_RLZabibCTIn7xIqE4MYJ1l5c-fJV5dEIBaisPcgRfIpXcWVLTRz1Zk6VbOScAiflJviwgLt8acJi8zBLV_KpwTt-pb0p1eKoqpDFwuVgfViOMeNLFCTVOLohw3w";
+var token = "Bearer  " + accessToken;
 var offset = 0;
 var limit = 50;
 var playlistsURL = "https://api.spotify.com/v1/users/"+userID+"/playlists?offset=0&limit=50";
@@ -118,7 +146,7 @@ function requestTracks(playlistObj){
 
 				fs.writeFile(logDir+tracksLog, JSON.stringify(playlistObj, null, 4), function (err) {
 					if (err) throw err;
-				  	fileLog('---Saved: ' + tracksLog);
+					fileLog('---Saved: ' + tracksLog);
 				});
 
 			} //END if res (tracks) 
