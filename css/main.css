@@ -1,0 +1,85 @@
+body {
+	background-color: grey;
+}
+
+.row {
+	position: relative;
+	width: 	70%;
+	left:  	10%;
+
+	/*border: 5px solid blue;*/
+}
+
+.column {
+	position: relative;
+	float: left;
+	/*left: 35px;*/
+	/*top: 206px;*/
+	width: 	49%;
+	margin: 0.5%;
+
+	/*border: 5px solid red;*/
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.lister {
+	height: 150px;
+	
+	overflow: auto;
+	padding: 10px;
+
+	background: #FFFFFF;
+	border: 1px solid #546DC5;
+	box-sizing: border-box;
+	box-shadow: 2px 3px 15px rgba(84, 109, 197, 0.25);
+	border-radius: 5px;
+
+}
+
+.button {
+	/*width: 50px;*/
+	/*height: 25px;*/
+	font-size: 16px;
+	display: inline-block;
+
+	padding: 15px 32px;
+	text-align: center;
+	color: white;
+	border: 1px solid #546DC5;
+	/*box-sizing: border-box;*/
+	box-shadow: 2px 3px 15px rgba(84, 109, 197, 0.25);
+	border-radius: 5px;
+}
+
+.button:hover {
+	background-color: #546DC5;
+}
+
+#log > .lister  {
+	/*width: 50%;*/
+	/*height: 150px;*/
+}
+
+#playlists {
+	/*position: absolute;*/
+	/*width: 675px;*/
+	/*height: 518px;*/
+	
+/*	left: 35px;
+	top: 206px;*/
+}
+
+#tracks {
+	/*position: absolute;*/
+	/*width: 675px;*/
+	/*height: 518px;*/
+	
+/*	left: 739px;
+	top: 206px;*/
+}
