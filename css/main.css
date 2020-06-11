@@ -1,14 +1,15 @@
 body {
-	background-color: grey;
+	background-color: #383131;
 }
 
 .row {
 	position: relative;
-	width: 	70%;
-	left:  	10%;
-
+	width: 95%;
+	left: 2.5%;
 	/*border: 5px solid blue;*/
 }
+
+.row {}
 
 .column {
 	position: relative;
@@ -29,17 +30,15 @@ body {
 }
 
 .lister {
-	height: 150px;
-	
+	height: 450px;
 	overflow: auto;
 	padding: 10px;
-
 	background: #FFFFFF;
 	border: 1px solid #546DC5;
 	box-sizing: border-box;
-	box-shadow: 2px 3px 15px rgba(84, 109, 197, 0.25);
+	box-shadow: 9px 9px 9px 1px rgba(84, 109, 197, 0.26);
 	border-radius: 5px;
-
+	/* box-shadow: inset 2px 4px 12px 2px rgba(84, 109, 197, 0.26); */
 }
 
 .button {
@@ -63,7 +62,7 @@ body {
 
 #log > .lister  {
 	/*width: 50%;*/
-	/*height: 150px;*/
+	height: 150px;
 }
 
 #playlists {
