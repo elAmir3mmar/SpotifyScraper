@@ -9,8 +9,21 @@ console.log("setting up vars");
 // import { authEndpoint, clientId, redirectUri, scopes } from "./config.mjs";
 // import hash from "./hash.mjs";
 // var hash = require('./hash.mjs');
+
+
+
+//Using Spotify Web Api to simplify spotify api requests
+// https://github.com/JMPerez/spotify-web-api-js
 var Spotify = require('spotify-web-api-js');
 var sp = new Spotify();
+
+// Using Promise Throttle to avoid rate limits when requesting tracks
+// https://github.com/JMPerez/promise-throttle
+var PromiseThrottle = require('promise-throttle');
+var promiseThrottle = new PromiseThrottle({
+    requestsPerSecond: 1,           // up to 1 request per second
+    promiseImplementation: Promise  // the Promise library you are using
+});
 
 // var token = "";
 // var userID = "ammarelamir";
@@ -21,6 +34,13 @@ var sp = new Spotify();
 // var playlistsURL = "https://api.spotify.com/v1/me/playlists?limit=50&offset=0";
 // var dateID = Date.now();
 
+
+var hackDB = {}; // A makeshift database stored in a variable for now.
+//I must update this to use IndexedDB or webstorage:
+//https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Client-side_storage
+//Using local storage is insufficient
+hackDB.PLAYLISTS = [];
+hackDB.TRACKS = [];
 var PLAYLISTS;
 var TRACKS;
 
@@ -52,6 +72,7 @@ if (require.main === module) {
       alert('There was an error during the authentication');
     }
     if (params.access_token) {
+	    // if found params update cookies etc
 		console.log("got hash params: ");
 		console.log(params);
 
@@ -59,22 +80,21 @@ if (require.main === module) {
 	    setCookie("refreshToken", params.refresh_token, 999999999);
 	    console.log(document.cookie);
 		sp.setAccessToken(params.access_token);
-		document.getElementById('login').style.display = "none"; 
-    
-    } else {
-		aT = getCookie("accessToken");
-		console.log("got cookie: "+ aT);
-		if (aT) {
-			sp.setAccessToken(aT);
-			document.getElementById('login').style.display = "none"; 
-			document.getElementById('buttons').style.display = "block"; 
 
-		} else {
-			console.log("Please log in.");
-		}
+    } else if (getCookie("accessToken")) {
+	    // if no params found check cookies 
+		console.log("found access token in cookie");
+			sp.setAccessToken(getCookie("accessToken"));
+
+	} else {
+	// if no access token found request a login
+		console.log("Please log in.");
+		// TODO Redirect automatically here? 
+	
     }
-
     if (sp.getAccessToken()){
+		document.getElementById('login').style.display = "none"; 
+		document.getElementById('buttons').style.display = "block"; 
     	console.log("Token found.. Starting Automatically");
     	loadDb();
     }
@@ -118,55 +138,53 @@ document.getElementById("refresh").addEventListener("click", refreshPlaylists);
 async function loadDb() {
 	console.log("loadDb");
 
-	PLAYLISTS = loadLocalPlaylists();
-	TRACKS = loadLocalTracks();
-	if (!PLAYLISTS || PLAYLISTS.length == 0) {
+	hackDB.PLAYLISTS = loadLocalPlaylists();
+	hackDB.TRACKS = loadLocalTracks();
+	if (!hackDB.PLAYLISTS || hackDB.PLAYLISTS.length == 0) {
 		await refreshPlaylists();
 	}
-	PLAYLISTS ? displayPlaylists(PLAYLISTS) : "" ;
+	hackDB.PLAYLISTS ? displayPlaylists(hackDB.PLAYLISTS) : "" ;
 
 }
 
 
-
 async function refreshPlaylists(){
-	let list = document.getElementById("playlistsList").innerText = "LOADING... ";
+	// document.getElementById("playlistTitle").innerText = "LOADING... ";
+	// document.getElementById("playlistsList").innerText = "LOADING... ";
+	updateDisplay("playlistTitle", "Loading...");
+	updateDisplay("playlistsList", "Loading...");
+
 	localStorage.removeItem('PLAYLISTS');
 	localStorage.removeItem('TRACKS');
 
-
-	PLAYLISTS = await requestUserPlaylists();
+	//PromiseThrottle.add(promise, options)
+	// PLAYLISTS = await requestUserPlaylists();
+	playlists = await requestUserPlaylists();
 	console.log("refreshed playlists");
-	console.log(PLAYLISTS);
-	localStorage.setItem('PLAYLISTS', JSON.stringify(PLAYLISTS));
+	console.log(playlists);
+	localStorage.setItem('PLAYLISTS', JSON.stringify(playlists));
+	hackDB.PLAYLISTS = playlists;
+	displayPlaylists(playlists);
 
-	// let TRACKS = [];
-	// PLAYLISTS.forEach(function(p){
-	// 	playlistTracks = requestPlaylistTracks(p.id);
-		
-	// 	let playlist = {};
-		
-	// 	playlist.name 	= p.name;
-	// 	playlist.id 	= p.id;
-	// 	playlist.tracks = playlistTracks;
-
-	// 	TRACKS.push(playlist);
-	// })
-
-	// localStorage.setItem('TRACKS', JSON.stringify(TRACKS));
-	// // refreshTracks();
-	
-	displayPlaylists(PLAYLISTS);
+	//Load Playlist Tracks as well
+	let  i = 0;
+	hackDB.PLAYLISTS.forEach((p) => {
+		loadPlaylistTracks(p.id)
+		updateDisplay("tracksListTitle", `Loaded ${i++} playlists... `)
+	})
+	i == hackDB.PLAYLISTS.length ? 
+		updateDisplay("tracksListTitle", `Loaded all ${i} playlists.`) 
+		: "Only loaded ${i} playlists???" ;
 }
 
 async function loadPlaylistTracks(playlistID) {
 	//Fetch tracks if not in local storage
 	//returns playlistTracks object
 	console.log("loadPlaylistTracks");
-	let TRACKS = loadLocalTracks();
+	let tracks = loadLocalTracks();
 	let playlistTracks;
-	if (TRACKS){
-		playlistTracks = TRACKS.filter(function(pT){
+	if (tracks){
+		playlistTracks = tracks.filter(function(pT){
 			return pT.id == playlistID;
 		})[0]; 
 	}
@@ -195,9 +213,9 @@ async function refreshPlaylistTracks(playlistID){
 	playlist.tracks = playlistTracks;
 	console.log("created playlist obj:")
 	console.log(playlist);
+
 	//Append to local storage
 	addLocalTracks(playlist);
-
 
 	return playlist;
 
@@ -221,11 +239,14 @@ function loadLocalPlaylists(playlistID = ""){
 
 function loadLocalTracks(){
 	console.log("loadLocalTracks");
-	TRACKS = JSON.parse(localStorage.getItem('TRACKS'));
+	return hackDB.TRACKS;
+	//Skipping all this to avoid local stroage
+/*	TRACKS = JSON.parse(localStorage.getItem('TRACKS'));
 	console.log("LOADED TRACKS: ");
 	console.log(TRACKS);
 	// TRACKS && display ? displayTracks(TRACKS) : "" ;
 	return TRACKS
+*/
 }
 
 function addLocalTracks(playlist) {
@@ -233,24 +254,28 @@ function addLocalTracks(playlist) {
 	//Adds it to local tracks if exists in store
 	console.log("add to local tracks...")
 	console.log("	first get local tracks")
-	let TRACKS = loadLocalTracks();
-	if (TRACKS) {
+	let tracks = loadLocalTracks();
+	if (tracks) {
 		console.log("FOUND TRACKS: ");
-		console.log(TRACKS);
+		console.log(tracks);
 	} else {
 		console.log("not tracks - create new store");
-		TRACKS = [];
+		tracks = [];
 	} 
 	console.log("	push playlist to tracks")
-	TRACKS.push(playlist);
+	tracks.push(playlist);
 
 	console.log("	TRACKS UPdated:")
-	console.log(TRACKS)
+	console.log(tracks)
 	console.log("storing TRACKS as: ");
-	console.log(TRACKS);
-	// console.log(JSON.stringify(TRACKS));
-	localStorage.setItem('TRACKS', JSON.stringify(TRACKS)); //somehing here? 
+	console.log(tracks);
 
+	// skipping local storage
+/*
+	localStorage.setItem('TRACKS', JSON.stringify(TRACKS)); 
+*/
+	hackDB.TRACKS = tracks;
+	console.log("DB TRACKS Len: " + hackDB.TRACKS.length);
 
 }
 
@@ -265,16 +290,6 @@ function download(text, filename){
   	// saveText( JSON.stringify(obj), "filename.json" );
 }
 
-// function store(text, name){
-// 	// var obj = { a : 1, b : 2};
-// 	// JSON.stringify(obj)
-// 	localStorage.setItem(name, text);
-	
-// 	// get:
-// 	// var obj2 = JSON.parse(localStorage.getItem('myObj'));
-// }
-
-
 async function requestUserPlaylists(count = 0){
 	//returns an array of JSON playlist objects
 	console.log("requestUserPlaylists");
@@ -284,7 +299,11 @@ async function requestUserPlaylists(count = 0){
 	let playlists = new Array();
 	// console.log("curr count: " + count);
 
-	let page = await sp.getUserPlaylists(options={"offset":count, "limit":limit});
+	let page = await promiseThrottle.add(
+		sp.getUserPlaylists.bind(
+			this,
+			options={"offset":count, "limit":limit}
+		));
 	page.err ? console.log("FAIL " + page.err) : "" ;
 	console.log(page.items);
 	playlists = page.items; 
@@ -334,7 +353,7 @@ function searchTracks(playlists, query){
     query = query.toUpperCase();
 
     playlists.length < 1 ? playlists = loadLocalPlaylists() : "" ; 
-    
+
 	playlists.forEach(function(p){
 		// tracks = await requestPlaylistTracks(p.id);
 
@@ -360,6 +379,10 @@ function searchTracks(playlists, query){
 	console.log(results);
 	displayTracks(results);
 	return results;
+}
+
+function updateDisplay(displayID, content){
+	document.getElementById(displayID).innerText = content;
 }
 
 function displayPlaylists(playlists){
@@ -418,9 +441,10 @@ function displayTracks(tracks, source){
 	console.log("Display tracks:")
 	console.log(tracks);
 
-	let title = document.getElementById("tracksListTitle");
-	title.innerHTML = tracks.length + " Tracks in: " + source.innerText;
-
+	// let title = document.getElementById("tracksListTitle");
+	// title.innerHTML = tracks.length + " Tracks in: " + source.innerText;
+	updateDisplay("tracksListTitle", tracks.length + " Tracks in: " + source.innerText);
+	
 	let list = document.getElementById("tracksList");
 	list.innerHTML = "";
 
@@ -464,18 +488,14 @@ async function requestPlaylistTracks(playlistID, count=0) {
 	let playlistTracks = new Array();
 	console.log("curr count: " + count);
 
-	let page = await sp.getPlaylistTracks(
-						playlistID, 
-						options={"offset":count, "limit":limit},
-						//function(err, res){
-						// 	if (err) {
-						// 		console.log(err);
-						// 	} else {
-						// 		console.log(res)
-						// 	}
-						// }
+	updateDisplay("playlistTitle", count + "Playlists Found...");
 
-						);
+	let page = await promiseThrottle.add(
+		sp.getPlaylistTracks.bind(
+			this,
+			playlistID, 
+			options={"offset":count, "limit":limit}
+		));
 	page.err ? console.log("FAIL " + page.err) : "" ;
 	console.log(page.items);
 	playlistTracks = page.items; 
@@ -483,6 +503,7 @@ async function requestPlaylistTracks(playlistID, count=0) {
 	let next 	= page.next;
 		count  += page.items.length;
 		total 	= page.total;
+	
 
 	// 	log 	= `current: ${page.href}
 	// 				\n Next: ${next}
