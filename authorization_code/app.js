@@ -104,7 +104,8 @@ app.get('/callback', function(req, res) {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
+        // res.redirect('/#' +
+        res.redirect('http://192.168.2.43:9966/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
