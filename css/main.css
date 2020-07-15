@@ -46,10 +46,17 @@ body {
 	/* box-shadow: inset 2px 4px 12px 2px rgba(84, 109, 197, 0.26); */
 }
 
+.log {
+	font-size: 10px;
+	text-align: center;
+}
+
 .button {
 	/*width: 50px;*/
 	/*height: 25px;*/
-	max-width: 10%;
+	/*max-width: 10%;*/
+	float: right;
+	margin-top: 5px;
 	font-size: 14px;
 	display: inline-block;
 
@@ -71,20 +78,7 @@ body {
 	height: 150px;
 }
 
-#playlists {
-	/*position: absolute;*/
-	/*width: 675px;*/
-	/*height: 518px;*/
-	
-/*	left: 35px;
-	top: 206px;*/
-}
-
-#tracks {
-	/*position: absolute;*/
-	/*width: 675px;*/
-	/*height: 518px;*/
-	
-/*	left: 739px;
-	top: 206px;*/
+.pbar {
+	color: white;
+	background-color: #546DC5;
 }

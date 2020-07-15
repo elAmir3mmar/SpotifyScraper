@@ -10,6 +10,7 @@
 		<!-- <link rel="apple-touch-icon" href="icon.png"> -->
 		<!-- Place favicon.ico in the root directory -->
 		<!-- <link rel="stylesheet" href="css/normalize.css"> -->
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="css/main.css">
 	</head>
 	<body>
@@ -22,79 +23,83 @@
 			<a href="http://localhost:8888" class="button" id="login">Login</a>	
 		</div>
 
-		<div class="row" id="buttons" style="display: none;">
-			
-			<a href="#" class="button" id="start">
-				Load Playlists
+		<div class="w3-row w3-padding" id="buttons" style="display: none;">
+<!-- 			
+<a href="#" class="button" id="start">
+	Load Playlists
+</a>
+ -->
+ 		<div class="w3-half w3-padding">
+ 			
+			<input class="w3-input w3-border w3-round-large" id="xListInput" type="text" value="xList" placeholder="xList Name"/>
+			<a href="#" class="button w3-right" id="xList">
+				Load xList
 			</a>
+			<a href="#" class="button w3-right" id="remX" style="display: none;">
+				Remove xTracks
+			</a>
+ 		</div>
+ 		<div class="w3-half w3-padding">
+			<input class="w3-input w3-border w3-round-large" id="searchInput" type="text" placeholder="Track Name"/>
+			<a href="#" class="button w3-right" id="searchTracks">
+				Search For Track
+			</a>
+ 			
+ 		</div>
+<!-- 			
+<a href="#" class="button" id="genWeekly">
+	generate weekly
+</a>
+ -->
+<!-- 			<a href="#" class="button" id="Download">
+	Download
+</a> -->
+<!-- 			<a href="#" class="button" id="refresh">
+	Refresh Playlists
+</a> -->
+<!-- 			<a href="#" class="button" id="searchPlaylists">
+	Search For Playlist
+</a> -->
 
-			<a href="#" class="button" id="xThis">
-				Load X-This
-			</a>
-			<a href="#" class="button" id="genWeekly">
-				generate weekly
-			</a>
-			<a href="#" class="button" id="Download">
-				Download
-			</a>
-			<a href="#" class="button" id="refresh">
-				Refresh Playlists
-			</a>
-			<input class="input" id="seachInput" type="text" placeholder="Playlist or Track Name"/>
-			<a href="#" class="button" id="search">
-				Search
-			</a>
 
-<!-- 			<div class="column c3">
-			</div>
-			<div class="column c3">
-			</div>
-			<div class="column c3">
-			</div>
- -->		</div>
-
-		<div class="row">
-			<div class="column">
-			</div>
-			<div class="column">
-			</div>
-		</div>
+		</div> 
+		<!-- END class="w3-row" id="buttons" -->
 		
-<!-- 		<div class="row">
-			<div id="log">
-				<h2>Log</h2>
-					<div id="logText" class="lister">					
-				</div>
-			</div>
-		</div> -->
-		
-		<div class="row">
-			<div id="playlistsColumn" class="column">
+		<div class="w3-row w3-padding">
+			<div id="playlistsColumn" class="w3-half w3-padding">
 				<h2 id="playlistTitle">Playlists col</h2>
 				<div id="playlistsList" class="lister">
 					<p>lister</p>
 				</div>
+				<p class="log" id="playlistLog">
+					log
+				</p>
 			</div>
-			<div id="tracksColumn" class="column">
+			<div id="tracksColumn" class="w3-half w3-padding">
 				<h2 id="tracksListTitle">Tracks col</h2>
 				<div id="tracksList" class="lister">
 					<p>lister</p>
 				</div>
+				<p class="log" id="tracklistLog">
+					log
+				</p>
 			</div>
+			<div class="w3-container">
+			  <div class="w3-light-grey">
+			  	<div id="progressBar" class="w3-container w3-center pbar" style="width:0%">0%</div>
+			  </div>
+			  <a href="#" class="w3-button-small w3-align-right" id="clear">
+			  	Clear Cookies
+			  </a>
 		</div>
 		
-		<script type="module" src="hash.mjs"></script>
 		<script src="./bundle.js" charset="utf-8"></script>
-<!-- 		<script src="spotifyPlaylists2.js" charset="utf-8"></script> -->
-		<script>
-		</script>
-
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
 		<!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
 		<script>
-		window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-		ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
+			window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+			ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
 		</script>
 		<script src="https://www.google-analytics.com/analytics.js" async defer></script>
 
