@@ -29,9 +29,11 @@ document.getElementById("searchTracks").addEventListener("click", search);
 document.getElementById("clear").addEventListener("click", clearCookies);
 document.getElementById("xList").addEventListener("click", xList);
 document.getElementById("remX").addEventListener("click", removeXTracks);
+document.getElementById("toggleShow").addEventListener("change", toggleShow);
 
-// Copied from SP OAuth examples
+
 function getHashParams() {
+	// Copied from SP OAuth examples
 	console.log("GETTING HASH PARAMS")
     var hashParams = {};
     var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -133,7 +135,27 @@ async function getPlaylists(owned = 0){
 		}
 		return ALL_PLAYLISTS
 	}
+}
 
+function toggleShow(){
+	if(this.checked){
+		showMine()
+	}
+	else {
+		showAll()
+	}
+}
+
+function showAll(){
+	getPlaylists()
+	.then(r => {
+		displayPlaylists(ALL_PLAYLISTS)
+	})
+}
+
+function showMine(){
+	getPlaylists(1)
+	.then(displayPlaylists(USER_PLAYLISTS))
 }
 
 async function requestUserPlaylists(count = 0, owned = 0){
@@ -181,13 +203,12 @@ async function requestUserPlaylists(count = 0, owned = 0){
 	return playlists;
 }
 
-async function requestPlaylistTracks(playlistID, count=0) {
+async function requestPlaylistTracks(playlist, count=0) {
 	//Returns an array of playlist track objects
 	// console.log("requesting tracks for: " + playlistID + " curr count: " + count);
-	
+	playlistID = playlist.id
 	let limit = 100;
 	let playlistTracks = new Array();
-	// console.log("curr count: " + count);
 
 	let page = await promiseThrottle.add(
 		sp.getPlaylistTracks.bind(
@@ -197,7 +218,6 @@ async function requestPlaylistTracks(playlistID, count=0) {
 		)
 	);
 	page.err ? console.log("FAIL " + page.err) : "" ;
-	// console.log(page.items);
 	playlistTracks = page.items; 
 	
 	let next 	= page.next;
@@ -210,21 +230,22 @@ async function requestPlaylistTracks(playlistID, count=0) {
 					\ncount: ${count}
 					\ntotal: ${total}\n\n
 					`;
-	// console.log(log);
 
 	if (next && count < total) {
-		// await setTimeout(() => { console.log("............stalling")}, 500);
 		playlistTracks = playlistTracks.concat(
-			//TODO Make this sync to show real time status?
-			await requestPlaylistTracks(playlistID, count)
+			await requestPlaylistTracks(playlist, count)
 			);
 	}
+	playlistTracks = playlistTracks.map(t=>{
+		if (typeof t === "undefined" || t.track == null) return;
+		
+		if (t.added_at) t=t.track
+		t.playlist = playlist
+		return t;
+	})
 
-	updateDisplay("tracklistLog", playlistID + " Track count: " + playlistTracks.length);
-
-	// console.log("Returning playlistTracks for " + playlistID + " count: " + playlistTracks.length);
+	updateDisplay("tracklistLog", playlist.name + " " + playlistID + " Track count: " + playlistTracks.length);
 	return playlistTracks;
-	// return processedTracks;
 }
 
 function download(text, filename){
@@ -242,16 +263,14 @@ async function xList(){
 	//get playlist tracks
 	let query = document.getElementById("xListInput").value.toUpperCase(); 
 	if(USER_PLAYLISTS.length == 0){ await getPlaylists(1) }
-	let x = searchPlaylists(query, USER_PLAYLISTS)
+	let x = filterPlaylists(query, USER_PLAYLISTS)
 	
-	requestPlaylistTracks(x[0].id)
+	requestPlaylistTracks(x[0])
 	.then(xTracks => {
-		xTracks.forEach(x=>{x.found=false})
-		
-		r = findTracks(xTracks, USER_PLAYLISTS)
+		updateDisplay("tracksListTitle", xTracks.length + " Tracks in xList")
+		if (xTracks.length == 0) return;
+		findTracks(xTracks, USER_PLAYLISTS)
 		//TODO remove all tracks from xlist if r = 0
-
-		console.log(xTracks); 
 	})
 	document.getElementById("xList").style.display = "none";
 	document.getElementById("remX").style.display = "block";
@@ -303,12 +322,14 @@ async function search() {
 	console.log("starting search for: " + query);
 
 	let USER_PLAYLISTS = await getPlaylists(0)
-	console.log(USER_PLAYLISTS)
-	// searchPlaylists(query, playlists);
+	// Search for playlists
+	// filterPlaylists(query, playlists);
+
+	// Search for tracks
 	incrementalSearch(query, USER_PLAYLISTS);
 }
 
-function searchPlaylists(query, playlists){
+function filterPlaylists(query, playlists){
 	console.log("searching for playlist: " + query);
 
 	if(playlists.length < 1){
@@ -336,8 +357,8 @@ function searchPlaylists(query, playlists){
 //.. Parse through each page of the playlistTracks then request the next page
 function incrementalSearch(query, playlists){
 
-	let results = []
-	var rCount = 0;
+	// let results = []
+	// var rCount = 0;
 	
 	var pCount = 0;
 
@@ -345,14 +366,15 @@ function incrementalSearch(query, playlists){
 		// r = await queryPlaylist(p, query)
 		queryPlaylist(p, query)
 		.then( r => {
-			if(r.length > 0){
-				rCount += r.length;
-				console.log(rCount); 
-				updateDisplay("tracksListTitle", rCount + " Match query.");
-				console.log(r)
-				displayAppend(r);
-			}
+			// if(r.length > 0){
+				// rCount += r.length;
+				// console.log(rCount); 
+				// updateDisplay("tracksListTitle", rCount + " Match query.");
+				// console.log(r)
+				// displayAppend(r);
+			// }
 			move("playlists", ++pCount, playlists.length)
+		
 		})
 
 	})
@@ -360,16 +382,21 @@ function incrementalSearch(query, playlists){
 
 async function queryPlaylist(p, query) {
 	let results = []
-	let tracks = await requestPlaylistTracks(p.id);
+	let rCount = 0;
+	let tracks = await requestPlaylistTracks(p);
 	tracks.forEach(t => {
-		name = t.track.name.toUpperCase();
+		if (typeof t === "undefined") return;
+		name = t.name.toUpperCase();
 		if(name.indexOf(query) !== -1){
 			console.log(`found ${name} in ${p.name}`)
-			t.track.playlist = p
-			results.push(t.track)
+			// t.playlist = p
+			// results.push(t)
+			updateDisplay("tracksListTitle", ++rCount + " Match query.");
+			displayAppend([t])
+
 		}
 	})
-	return results;
+	// return results;
 }
 
 function sameTrack(t1, t2){
@@ -402,15 +429,15 @@ function findTracks(tracks, playlists){
 	CURR_TRACKS = []
 	updateDisplay("tracksList", "");
 
-	// let results = []
 	let pCount = 0;
 	playlists.forEach(p => {
 		if (p.name.toUpperCase() == "XTHIS") {return;}
-		requestPlaylistTracks(p.id)
+		requestPlaylistTracks(p)
 		.then(pT => {
 			// console.log(pT)
-			pT = pT.map(t => {/*console.log(t);*/ return t.track})
+			// pT = pT.map(t => {/*console.log(t);*/ return t.track})
 			let r = filterTracks(pT, tracks)
+			rCount += r.length
 			updateDisplay("playlistLog", `${p.name} ${p.id} ${r.length}`)
 			r.forEach(t => {
 				t.playlist = p
@@ -420,11 +447,11 @@ function findTracks(tracks, playlists){
 			move("playlists", ++pCount, playlists.length)
 		})
 	})
-	return ;// TODO return count
 }
 
 function updateDisplay(displayID, content){
 	document.getElementById(displayID).innerText = content;
+
 }
 
 function displayPlaylists(playlists){
@@ -441,27 +468,17 @@ function displayPlaylists(playlists){
 
 	playlists.forEach(function(p) {
 		let div = document.createElement("div");
-		// let a = document.createElement("a");
-		// a.className = "playlist-item";
-		// a.id = p.name + " link";
-		// a.onclick = viewPlaylist;
 		
 		let button = document.createElement("button");
 		let ptext = p.name + " - " + p.owner.id;
 		button.innerText = ptext;
-		// button.id = p.name + " button";
 		button.id = p.id;
 		button.onclick = viewPlaylist;
 
-		// a.append(button);
-		// div.append(a);
 		div.append(button);
 		list.append(div);
 	})
 
-
-	// playlists.forEach(p => s+="<p onClick={requestPlaylistTracks}>"+p.name+"</p>"+"<br>");
-	// return s;
 }
 
 async function viewPlaylist() {
@@ -470,53 +487,65 @@ async function viewPlaylist() {
 	console.log("called from: " + this.id)
 	console.log("This:")
 	console.log(this)
-	let playlistTracks = await requestPlaylistTracks(this.id);
+	let thisId = this.id
+	let playlist = await getPlaylists()
+	playlist = playlist.filter(p => {return thisId == p.id})
+
+	let playlistTracks = await requestPlaylistTracks(playlist[0]);
 	console.log("found playlist Tracks to view. Now display...");
-	displayTracks(playlistTracks, this);
+	displayAppend(playlistTracks);
 }
 
-function displayTracks(tracks, source=""){
-	console.log("Display tracks:")
-	console.log(tracks);
+// function displayTracks(tracks, source=""){
+// 	console.log("Display tracks:")
+// 	console.log(tracks);
 
-	updateDisplay("tracksListTitle", tracks.length + " Match query.");
+// 	updateDisplay("tracksListTitle", tracks.length + " Match query.");
 	
-	let list = document.getElementById("tracksList");
-	list.innerHTML = "";
+// 	let list = document.getElementById("tracksList");
+// 	list.innerHTML = "";
 
-	tracks.forEach(function(t){
-		console.log(t);
-		div = document.createElement("div");
-		text 	= `${t.name} - ${t.artists[0].name} in ${t.playlist.name}\n`;
-		if (t.inPlaylists) {
-			text += ` In Playlists: ${t.playlist.name}\n`;
-		}
+// 	tracks.forEach(t => {
+// 		if (typeof t === 'undefined') return;
+// 		if(t.added_at) t = t.track
+// 		console.log(t);
+// 		div = document.createElement("div");
+// 		text 	= `${t.name} - ${t.artists[0].name} in ${t.playlist.name}\n`;
+// 		if (t.inPlaylists) {
+// 			text += ` In Playlists: ${t.playlist.name}\n`;
+// 		}
 
-		div.className = "trackItem";
-		div.id = t.id;
+// 		div.className = "trackItem";
+// 		div.id = t.id;
 
-		div.innerText = text;
-		list.append(div);
-	})
-}
+// 		div.innerText = text;
+// 		list.append(div);
+// 	})
+// }
 
 //TODO update to react
 /* Updates a display list realtime.
 	Takes a destination and a list of items (tracks with playlists) to display.
 */
-function displayAppend(tracks, destination="tracksList") {
-	// console.log("dAppend ", tracks)
+function displayAppend(tracks) {
+	let destination="tracksList";
 	let list = document.getElementById(destination);
 
+	updateDisplay("tracksListTitle", tracks.length + " Match query.");
+
 	tracks.forEach( t => {
+		if (typeof t === 'undefined') return;
+		if(t.added_at) t = t.track
+		console.log(t)
 		div = document.createElement("div");
 		text 	= `${t.name}, ${t.artists[0].name}, ${t.playlist.name}\n`;
 		div.className = "trackItem";
 		div.id = t.id;
-		div.dataset.source = t;
+		div.data = t;
 		div.dataset.playlistId = t.playlist.id;
 		div.dataset.playlistName = t.playlist.name;
 		div.innerText = text;
+		div.onclick = function(){console.log(this.data)}
 		list.append(div);	
 		div.scrollIntoView({behavior: "smooth"});
 	})
