@@ -24,7 +24,29 @@
 		</div>
 		<div class="w3-row w3-padding" id="buttons" style="display: none;">
 			<div class="w3-half w3-padding">
-				
+				<div class="w3-row">
+
+					<!-- <label for="filterInput">Filter Playlists:</label> -->
+					<input type="search" 
+						id="filterInput" 
+						name="q-playlists" 
+						class="w3-input w3-border w3-round-large w3-twothird"
+						placeholder="Playlist Name" 
+						aria-label="Filter the playlists by text."/>
+						<a href="#" class="w3-button w3-right w3-third w3-round-large" id="filter">Filter Playlists</a>
+						<a href="#" class="w3-button w3-right w3-third w3-round-large" id="clear">Clear Filter</a>
+				</div>
+				<div class="w3-row">
+										
+				<!-- Rounded switch -->
+				<p style="display: inline; text-align: right;">My Playlists Only</p>
+				<label class="switch">
+					<input id="toggleShow" type="checkbox" checked>
+					<span class="slider round"></span>
+				</label>
+				</div>
+<!-- <div style="display: none;">
+
 				<input class="w3-input w3-border w3-round-large" id="xListInput" type="text" value="xList" placeholder="xList Name"/>
 				<a href="#" class="button w3-right" id="xList">
 					Load xList
@@ -32,14 +54,20 @@
 				<a href="#" class="button w3-right" id="remX" style="display: none;">
 					Remove xTracks
 				</a>
+</div> -->
+
 			</div>
 			<div class="w3-half w3-padding">
-				<input class="w3-input w3-border w3-round-large" id="searchInput" type="text" placeholder="Track Name"/>
-				<a href="#" class="button w3-right" id="searchTracks">
-					Search For Track
-				</a>
+				<!-- <label for="searchInput" class="w3-left">Search for a track:</label> -->
 				
-			</div>
+				<input type="search" 
+					id="searchInput" 
+					name="q-tracks"
+					class="w3-input w3-border w3-round-large w3-twothird" 
+					placeholder="Track Name" />
+				<a href="#" class="w3-button w3-right w3-third w3-round-large" id="searchTracks">Search For Track</a>
+				
+				</div>
 			<!--
 			<a href="#" class="button" id="genWeekly">
 				generate weekly
@@ -60,30 +88,25 @@
 		<div class="w3-row w3-padding">
 			<div id="playlistsColumn" class="w3-half w3-padding">
 				<div class="w3-row w3-padding">
-					<h2 id="playlistTitle" style="display: inline">Playlists col</h2>
-					<div class="w3-half w3-right">
-						<!-- Rounded switch -->
-						<p style="display: inline; text-align: right;">My Playlists Only</p>
-						<label class="switch">
-							<input id="toggleShow" type="checkbox" checked>
-							<span class="slider round"></span>
-						</label>
-					</div>
+					<h2 id="playlistTitle" style="display: inline">Playlists</h2>
+					<!-- <div class="w3-half w3-right">
+
+					</div> -->
 				</div>
 				<div id="playlistsList" class="lister">
-					<p>lister</p>
+					<!-- <p>lister</p> -->
 				</div>
 				<p class="log" id="playlistLog">
-					log
+					<!-- log -->
 				</p>
 			</div>
 			<div id="tracksColumn" class="w3-half w3-padding">
-				<h2 id="tracksListTitle">Tracks col</h2>
+				<h2 id="tracksListTitle">Tracks</h2>
 				<div id="tracksList" class="lister">
-					<p>lister</p>
+					<p>Select a playlist to display its tracks <br>or search for a track above.</p>
 				</div>
 				<p class="log" id="tracklistLog">
-					log
+					<!-- log -->
 				</p>
 			</div>
 			<div class="w3-container">

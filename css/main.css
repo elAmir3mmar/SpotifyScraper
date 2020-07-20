@@ -54,22 +54,35 @@ body {
 .button {
 	/*width: 50px;*/
 	/*height: 25px;*/
-	/*max-width: 10%;*/
-	float: right;
-	margin-top: 5px;
+	max-width: 25%;
+	max-height: 40px;
+	/* float: right; */
+	/* margin-top: 5px; */
 	font-size: 14px;
+	color: white;
 	display: inline-block;
-	padding: 15px 32px;
+	padding: 5px 5px;
 	text-align: center;
 	/* color: white; */
 	border: 1px solid #546DC5;
 	/*box-sizing: border-box;*/
 	box-shadow: 2px 3px 15px rgba(84, 109, 197, 0.25);
-	border-radius: 5px;
+	/* border-radius: 5px; */
 }
 
-.button:hover {
-	background-color: #546DC5;
+.w3-button {
+	/* font-size: 14px; */
+	color: white;
+	/* display: inline-block; */
+	padding: 8px 5px;
+	/* text-align: center; */
+	border: 1px solid #546DC5;
+	box-shadow: 2px 3px 15px rgba(84, 109, 197, 0.25);
+}
+
+.w3-button:hover {
+	background-color: #546DC5!important;
+	color: white!important;
 }
 
 #log > .lister  {
@@ -86,7 +99,7 @@ body {
 /* The switch - the box around the slider */
 .switch {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
   float: right;
   width: 60px;
   height: 34px;
@@ -125,7 +138,7 @@ body {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #546DC5;
 }
 
 input:focus + .slider {

@@ -24,12 +24,13 @@ var ALL_PLAYLISTS = []
 var CURR_TRACKS = []
 
 document.getElementById("searchTracks").addEventListener("click", search);
-// document.getElementById("searchPlaylists").addEventListener("click", search);
+document.getElementById("filterInput").addEventListener("click", filterPlaylists);
+document.getElementById("toggleShow").addEventListener("change", toggleShow);
 // document.getElementById("refresh").addEventListener("click", refreshPlaylists);
 document.getElementById("clear").addEventListener("click", clearCookies);
-document.getElementById("xList").addEventListener("click", xList);
-document.getElementById("remX").addEventListener("click", removeXTracks);
-document.getElementById("toggleShow").addEventListener("change", toggleShow);
+
+// document.getElementById("xList").addEventListener("click", xList);
+// document.getElementById("remX").addEventListener("click", removeXTracks);
 
 
 function getHashParams() {
