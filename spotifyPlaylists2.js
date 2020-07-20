@@ -24,13 +24,32 @@ var ALL_PLAYLISTS = []
 var CURR_TRACKS = []
 
 document.getElementById("searchTracks").addEventListener("click", search);
-document.getElementById("filterInput").addEventListener("click", filterPlaylists);
+document.getElementById("filterPlaylists").addEventListener("click", filterPlaylists);
 document.getElementById("toggleShow").addEventListener("change", toggleShow);
 // document.getElementById("refresh").addEventListener("click", refreshPlaylists);
 document.getElementById("clear").addEventListener("click", clearCookies);
 
+function addEnter(element, button) {
+	var e = document.getElementById(element)
+	e.addEventListener("keyup", function(event) {
+		// Number 13 is the "Enter" key on the keyboard
+		if (event.keyCode === 13) {
+		  // Cancel the default action, if needed
+		  event.preventDefault();
+		  // Trigger the button element with a click
+		  document.getElementById(button).click();
+		}
+	  });
+
+}
+addEnter("filterInput", "filterPlaylists")
+addEnter("searchInput", "searchTracks")
+
+
+
 // document.getElementById("xList").addEventListener("click", xList);
 // document.getElementById("remX").addEventListener("click", removeXTracks);
+document.getElementById("remX").addEventListener("click", xList);
 
 
 function getHashParams() {
@@ -83,7 +102,7 @@ if (require.main === module) {
 	//On Load get params
 	var params = getHashParams();
     if (params.error) {
-      alert('There was an error during the authentication');
+    	alert('There was an error during the authentication');
     }
     if (params.access_token) {
 	    // if found params update cookies etc
@@ -120,8 +139,16 @@ if (require.main === module) {
 }
 
 async function load(){
-	USER_PLAYLISTS = await getPlaylists(1);
-	displayPlaylists(USER_PLAYLISTS)
+	// USER_PLAYLISTS = await getPlaylists(1);
+	getPlaylists(1)
+	.then(res => {
+		USER_PLAYLISTS = res
+		displayPlaylists(USER_PLAYLISTS)
+	})
+	.catch(err => {
+		console.log("Please log in.");
+		window.location.href = "http://localhost:8888";
+	})
 }
 
 async function getPlaylists(owned = 0){
@@ -260,20 +287,56 @@ function download(text, filename){
   	// saveText( JSON.stringify(obj), "filename.json" );
 }
 
-async function xList(){
+function parseTracks() {
+	console.log("PARSE")
+	var tracksList = document.getElementById("tracksList")
+	let tracks = []
+	console.log(tracksList)
+	for (let i = 0; i < tracksList.childNodes.length; i++) {
+		let c = tracksList.childNodes[i]
+		console.log(c)
+		let t = {}
+		t.name = c.innerText.split(",")[0]
+		t.id = c.id
+		t.playlistName = c.data-playlist-name
+		t.playlistId = c.data-playlist-id
+		tracks.push(t)
+	}
+
+	return tracks;
+}
+
+function getCurrentTracks() {
+	// if(CURR_TRACKS.length == 0){
+	// 	CURR_TRACKS = parseTracks();
+	// }
+	// if (CURR_TRACKS.length==0){
+	// 	console.log("No tracks found!")
+	// 	throw("No tracks found!")
+	// }
+	CURR_TRACKS = parseTracks();
+
+	return CURR_TRACKS;
+}
+async function xList() {
 	//get playlist tracks
-	let query = document.getElementById("xListInput").value.toUpperCase(); 
-	if(USER_PLAYLISTS.length == 0){ await getPlaylists(1) }
-	let x = filterPlaylists(query, USER_PLAYLISTS)
+	// let query = document.getElementById("xListInput").value.toUpperCase(); 
+	// if(USER_PLAYLISTS.length == 0){ await getPlaylists(1) }
+	// let x = filterPlaylists(query, USER_PLAYLISTS)
 	
-	requestPlaylistTracks(x[0])
-	.then(xTracks => {
-		updateDisplay("tracksListTitle", xTracks.length + " Tracks in xList")
-		if (xTracks.length == 0) return;
-		findTracks(xTracks, USER_PLAYLISTS)
-		//TODO remove all tracks from xlist if r = 0
-	})
-	document.getElementById("xList").style.display = "none";
+	// requestPlaylistTracks(x[0])
+	// .then(xTracks => {
+	// 	updateDisplay("tracksListTitle", xTracks.length + " Tracks in xList")
+	// 	if (xTracks.length == 0) return;
+	// 	findTracks(xTracks, USER_PLAYLISTS)
+	// 	//TODO remove all tracks from xlist if r = 0
+	// })
+
+	// let tracks = parseTracks()
+	let tracks = getCurrentTracks()
+	findTracks(tracks, USER_PLAYLISTS)
+	// document.getElementById("xList").style.display = "none";
+	removeXTracks()
 	document.getElementById("remX").style.display = "block";
 }
 
@@ -288,18 +351,19 @@ function removeXTracks(){
 	trackIds = CURR_TRACKS.map(t => {return t.id})
 	trackUris = CURR_TRACKS.map(t => {return t.uri})
 
-	sp.removeFromMySavedTracks(trackIds).then(res => console.log(res))
+	// sp.removeFromMySavedTracks(trackIds).then(res => console.log(res))
 	
 	for (let id in playlists){
 		// if(playlists[id].playlist.name.toUpperCase() == "XTHIS"){
 		// 	continue;
 		// }
 		let uris = playlists[id].tracks.map(t => {return t.uri})
+		console.log("REMOVING")
 		console.log(id, uris)
-		sp.removeTracksFromPlaylist(id, uris).then(res => console.log(res))
+		// sp.removeTracksFromPlaylist(id, uris).then(res => console.log(res))
 	}
 
-	xList()
+	// xList()
 }
 
 function mapPlaylists(tracks){
@@ -330,17 +394,19 @@ async function search() {
 	incrementalSearch(query, USER_PLAYLISTS);
 }
 
-function filterPlaylists(query, playlists){
+async function filterPlaylists(query, playlists){
+	if (!(typeof(query) === 'string')) {
+		query = document.getElementById("filterInput").value.trim().toUpperCase(); 
+	}
 	console.log("searching for playlist: " + query);
 
-	if(playlists.length < 1){
-		console.log("ERR: Playlists needed.");
-		// let playlists = await requestUserPlaylists();
+	if(!playlists){
+		playlists = await getPlaylists()
 	}
 
     let results = [];
 
-    results = playlists.filter(function(p) {
+    results = playlists.filter(p => {
     	let name = p.name.toUpperCase();
     	let id = p.id.toUpperCase();
     	let nameMatch = name.indexOf(query) !== -1;
@@ -432,7 +498,7 @@ function findTracks(tracks, playlists){
 
 	let pCount = 0;
 	playlists.forEach(p => {
-		if (p.name.toUpperCase() == "XTHIS") {return;}
+		// if (p.name.toUpperCase() == "XTHIS") {return;}
 		requestPlaylistTracks(p)
 		.then(pT => {
 			// console.log(pT)
@@ -484,7 +550,7 @@ function displayPlaylists(playlists){
 
 async function viewPlaylist() {
 	//loads the tracks for the select playlist
-
+	updateDisplay("tracksList", "")
 	console.log("called from: " + this.id)
 	console.log("This:")
 	console.log(this)
