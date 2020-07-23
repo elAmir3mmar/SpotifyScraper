@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8888;
+const PORT = 8888;
 
 var request = require('request'); // "Request" library
 var cors = require('cors');
@@ -25,14 +25,11 @@ app.use(express.static(__dirname + '/public'))
 app.use(express.static("modules"));
 app.use(express.static("css"));
 
-// app.get('/', (req, res) => {
-// 	res.sendFile(__dirname + "/index.html");
-// 	console.log("hi there / ");
-// });
+require('dotenv').config();
 
-var client_id = '3d1a99d8e7f1435588e9ed60e21964ce'; // Your client id
-var client_secret = 'a9d9be494cfa40eb85309bc775531f07'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+const client_id = process.env.CLIENT_ID; // Your client id
+const client_secret = process.env.CLIENT_SECRET; // Your secret
+const redirect_uri = 'http://localhost:'+PORT+'/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -166,11 +163,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-app.get('/token', (req, res) => {
-	console.log("token");
-})
 
-
-app.listen(port, () => {
-	console.log(`SP Server listening at http://localhost:${port}`)
+app.listen(PORT, () => {
+	console.log(`SP Server listening at http://localhost:${PORT}`)
 })
