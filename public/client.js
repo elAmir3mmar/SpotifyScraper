@@ -8,8 +8,8 @@ const sp = new Spotify();
 var userId = "";
 
 
-// Using Promise Throttle to avoid rate limits when requesting tracks
-// https://github.com/JMPerez/promise-throttle
+// // Using Promise Throttle to avoid rate limits when requesting tracks
+// // https://github.com/JMPerez/promise-throttle
 const PromiseThrottle = require('promise-throttle');
 const promiseThrottle = new PromiseThrottle({
     requestsPerSecond: 5,           // up to 5 request per second
@@ -93,51 +93,47 @@ function clearCookies() {
 	setCookie("accessToken", params.access_token, -1);
 }
 
-if (require.main === module) {
-	console.log('called directly');
-	spFunc();
-	
-	} else {
-	console.log("loading in browser");
+console.log("loading in browser");
 
-	//On Load get params
-	var params = getHashParams();
-    if (params.error) {
-    	alert('There was an error during the authentication');
-    }
-    if (params.access_token) {
-	    // if found params update cookies etc
-		console.log("got hash params: ");
-		console.log(params);
-
-	    setCookie("accessToken", params.access_token);
-	    setCookie("refreshToken", params.refresh_token, 999999999);
-	    console.log(document.cookie);
-		sp.setAccessToken(params.access_token);
-
-    } else if (getCookie("accessToken")) {
-	    // if no params found check cookies 
-		console.log("found access token in cookie");
-			sp.setAccessToken(getCookie("accessToken"));
-
-	} else {
-	// if no access token found request a login
-		console.log("Please log in.");
-		//TODO use the refresh token here
-		window.location.href = "http://localhost:8888";
-	
-    }
-    if (sp.getAccessToken()){
-		document.getElementById('login').style.display = "none"; 
-		document.getElementById('buttons').style.display = "block"; 
-    	console.log("Token found.. Starting Automatically");
-    	sp.getMe().then(r =>{
-    		console.log(r.id)
-    		userId = r.id;
-    	})
-    	load();
-    }
+//On Load get params
+var params = getHashParams();
+if (params.error) {
+	alert('There was an error during the authentication');
 }
+if (params.access_token) {
+	// if found params update cookies etc
+	console.log("got hash params: ");
+	console.log(params);
+
+	setCookie("accessToken", params.access_token);
+	setCookie("refreshToken", params.refresh_token, 999999999);
+	console.log(document.cookie);
+	
+	sp.setAccessToken(params.access_token);
+
+} else if (getCookie("accessToken")) {
+	// if no params found check cookies 
+	console.log("found access token in cookie");
+		sp.setAccessToken(getCookie("accessToken"));
+
+} else {
+// if no access token found request a login
+	console.log("Please log in.");
+	//TODO use the refresh token here
+	window.location.href = "/login";
+
+}
+if (sp.getAccessToken()){
+	document.getElementById('login').style.display = "none"; 
+	document.getElementById('buttons').style.display = "block"; 
+	console.log("Token found.. Starting Automatically");
+	sp.getMe().then(r =>{
+		console.log(r.id)
+		userId = r.id;
+	})
+	load();
+}
+
 
 async function load(){
 	// USER_PLAYLISTS = await getPlaylists(1);

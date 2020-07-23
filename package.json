@@ -1,8 +1,8 @@
 {
-  "name": "spotifyscraper",
+  "name": "spotifind",
   "version": "1.0.0",
   "description": "The Spotify Playlist Scraper Project",
-  "main": "SotifyPlaylists2.js",
+  "main": "server.js",
   "dependencies": {
     "babel-preset-env": "^1.7.0",
     "babelify": "^10.0.0",
@@ -23,7 +23,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify ./public/client.js>./public/bundle.js"
   },
   "repository": {
     "type": "git",
