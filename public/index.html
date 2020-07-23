@@ -6,10 +6,8 @@
 		<title>SpotiFind</title>
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="manifest" href="site.webmanifest">
-		<!-- <link rel="apple-touch-icon" href="icon.png"> -->
-		<!-- Place favicon.ico in the root directory -->
-		<!-- <link rel="stylesheet" href="css/normalize.css"> -->
+		<!-- <link rel="manifest" href="site.webmanifest"> -->
+
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="/main.css">
 	</head>
@@ -20,14 +18,12 @@
 		<!-- Add your site or application content here -->
 		<div class="row" >
 			<h1>SpotiFind</h1>
-			<!-- <a href="http://localhost:8888" class="button" id="login">Login</a> -->
 			<a href="/login" class="button" id="login">Login</a>
 		</div>
 		<div class="w3-row w3-padding" id="buttons" style="display: none;">
 			<div class="w3-half w3-padding">
 				<div class="w3-row">
 
-					<!-- <label for="filterInput">Filter Playlists:</label> -->
 					<input type="search" 
 						id="filterInput" 
 						name="q-playlists" 
@@ -47,21 +43,9 @@
 					<span class="slider round"></span>
 				</label>
 				</div>
-<!-- <div style="display: none;">
-
-				<input class="w3-input w3-border w3-round-large" id="xListInput" type="text" value="xList" placeholder="xList Name"/>
-				<a href="#" class="button w3-right" id="xList">
-					Load xList
-				</a>
-				<a href="#" class="button w3-right" id="remX" style="display: none;">
-					Remove xTracks
-				</a>
-</div> -->
 
 			</div>
 			<div class="w3-half w3-padding">
-				<!-- <label for="searchInput" class="w3-left">Search for a track:</label> -->
-				
 				<input type="search" 
 					id="searchInput" 
 					name="q-tracks"
@@ -69,24 +53,10 @@
 					placeholder="Track Name" />
 				<a href="#" class="w3-button w3-right w3-third w3-round-large" id="searchTracks">Search For Track</a>
 				
-				<a href="#" class="w3-button w3-round-large" id="remX" style="display: ;">
+				<a href="#" class="w3-button w3-round-large" id="remX" style="display: none;">
 					Remove xTracks
 				</a>
 			</div>
-			<!--
-			<a href="#" class="button" id="genWeekly">
-				generate weekly
-			</a>
-			-->
-			<!-- 			<a href="#" class="button" id="Download">
-				Download
-			</a> -->
-			<!-- 			<a href="#" class="button" id="refresh">
-				Refresh Playlists
-			</a> -->
-			<!-- 			<a href="#" class="button" id="searchPlaylists">
-				Search For Playlist
-			</a> -->
 		</div>
 		<!-- END class="w3-row" id="buttons" -->
 		
@@ -94,15 +64,10 @@
 			<div id="playlistsColumn" class="w3-half w3-padding">
 				<div class="w3-row w3-padding">
 					<h2 id="playlistTitle" style="display: inline">Playlists</h2>
-					<!-- <div class="w3-half w3-right">
-
-					</div> -->
 				</div>
 				<div id="playlistsList" class="lister">
-					<!-- <p>lister</p> -->
 				</div>
 				<p class="log" id="playlistLog">
-					<!-- log -->
 				</p>
 			</div>
 			<div id="tracksColumn" class="w3-half w3-padding">
@@ -125,13 +90,5 @@
 			
 			<script src="./bundle.js" charset="utf-8"></script>
 			<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-			<script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
-			<!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-			<!-- <script>
-				window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-				ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
-			</script>
-			<script src="https://www.google-analytics.com/analytics.js" async defer></script>
-			 -->
 		</body>
 	</html>
