@@ -111,3 +111,4 @@ web-api-auth-examples
 *.txt
 auth_app.js
 *lock*
+.env
