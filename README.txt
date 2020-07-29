@@ -8,30 +8,23 @@ NPM Libraries:
 
 	broserify to bundle libraries
 	
-	budo for live dev testing. 
+	nodemon for live dev testing. 
 	
-
-Authorization Code:
-	The authorization_code/ directory is cloned from the 
-	spotify OAuth example code. 
-
-
 Main Files: 
-	spotifyPlaylists2.js 
-	index.html
-	css/main.css
-	authorization_code/. (as cloned from Spotify)
+	./server.js is the starting point. It handles authorization and routing.  
+	./public/client.js is the main js code that handles the interface and the API requests.
+	./public/bundle.js is the compiled code for the browser
+	./.env the secret file storing the API Client ID and Secret
 
-
+Web Files:
+	./public/index.html
+	./css/main.css
 
 Start:
-	browserify spotifyPlaylists2.js > bundle.js
-or 
-	budo spotifyPlaylists2.js:bundle.js --live
-
-and:
-	node ./authorization_code/app.js
+	browserify ./public/client.js>./public/bundle.js
+then:
+	ndoemon server.js
 
 go to:
-http://192.168.2.43:9966/
+http://192.168.2.43:8888/
 
