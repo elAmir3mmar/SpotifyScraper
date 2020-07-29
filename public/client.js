@@ -40,23 +40,20 @@ function addEnter(element, button) {
 		  document.getElementById(button).click();
 		}
 	  });
-
 }
 addEnter("filterInput", "filterPlaylists")
 addEnter("searchInput", "searchTracks")
-
-
 
 // document.getElementById("xList").addEventListener("click", xList);
 // document.getElementById("remX").addEventListener("click", removeXTracks);
 document.getElementById("remX").addEventListener("click", xList);
 
-
 function getHashParams() {
 	// Copied from SP OAuth examples
 	console.log("GETTING HASH PARAMS")
     var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
+    var e, 
+    	r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
     e = r.exec(q)
     while (e) {
@@ -121,11 +118,14 @@ if (params.access_token) {
 	console.log("Please log in.");
 	//TODO use the refresh token here
 	window.location.href = "/login";
-
 }
+
 if (sp.getAccessToken()){
-	document.getElementById('login').style.display = "none"; 
+	//if access token setup, proceed.
+	document.getElementById('loader').style.display = "none"; 
 	document.getElementById('buttons').style.display = "block"; 
+	document.getElementById("body").style.display = "block";
+
 	console.log("Token found.. Starting Automatically");
 	sp.getMe().then(r =>{
 		console.log(r.id)
