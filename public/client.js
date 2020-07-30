@@ -418,7 +418,8 @@ function incrementalSearch(query, playlists){
 
 async function queryPlaylist(p, query) {
 	let results = []
-	let rCount = 0;
+	// let rCount = 0;
+	
 	let tracks = await requestPlaylistTracks(p);
 	tracks.forEach(t => {
 		if (typeof t === "undefined") return;
@@ -427,9 +428,13 @@ async function queryPlaylist(p, query) {
 			console.log(`found ${name} in ${p.name}`)
 			// t.playlist = p
 			// results.push(t)
-			updateDisplay("tracksListTitle", ++rCount + " Match query");
+			// rCount = rCount + 1
+			let rCount = document.getElementById("tracksList")
+				.getElementsByClassName("trackItem")
+				.length;
+			console.log(rCount)
+			updateDisplay("tracksListTitle", `${rCount+1} tracks found...`);
 			displayAppend([t])
-
 		}
 	})
 	// return results;
@@ -527,6 +532,8 @@ async function viewPlaylist() {
 
 	let playlistTracks = await requestPlaylistTracks(playlist[0]);
 	console.log("found playlist Tracks to view. Now display...");
+	updateDisplay("tracksListTitle", playlistTracks.length + " in playlist");
+
 	displayAppend(playlistTracks);
 }
 
@@ -538,7 +545,6 @@ function displayAppend(tracks) {
 	let destination="tracksList";
 	let list = document.getElementById(destination);
 
-	updateDisplay("tracksListTitle", tracks.length + " Match query");
 
 	tracks.forEach( t => {
 		if (typeof t === 'undefined') return;
