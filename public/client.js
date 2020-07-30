@@ -26,7 +26,6 @@ var CURR_TRACKS = []
 document.getElementById("searchTracks").addEventListener("click", search);
 document.getElementById("filterPlaylists").addEventListener("click", filterPlaylists);
 document.getElementById("toggleShow").addEventListener("change", toggleShow);
-// document.getElementById("refresh").addEventListener("click", refreshPlaylists);
 document.getElementById("clear").addEventListener("click", clearCookies);
 
 function addEnter(element, button) {
@@ -316,23 +315,8 @@ function getCurrentTracks() {
 	return CURR_TRACKS;
 }
 async function xList() {
-	//get playlist tracks
-	// let query = document.getElementById("xListInput").value.toUpperCase(); 
-	// if(USER_PLAYLISTS.length == 0){ await getPlaylists(1) }
-	// let x = filterPlaylists(query, USER_PLAYLISTS)
-	
-	// requestPlaylistTracks(x[0])
-	// .then(xTracks => {
-	// 	updateDisplay("tracksListTitle", xTracks.length + " Tracks in xList")
-	// 	if (xTracks.length == 0) return;
-	// 	findTracks(xTracks, USER_PLAYLISTS)
-	// 	//TODO remove all tracks from xlist if r = 0
-	// })
-
-	// let tracks = parseTracks()
 	let tracks = getCurrentTracks()
 	findTracks(tracks, USER_PLAYLISTS)
-	// document.getElementById("xList").style.display = "none";
 	removeXTracks()
 	document.getElementById("remX").style.display = "block";
 }
@@ -421,24 +405,12 @@ async function filterPlaylists(query, playlists){
 //.. Parse through each page of the playlistTracks then request the next page
 function incrementalSearch(query, playlists){
 
-	// let results = []
-	// var rCount = 0;
-	
 	var pCount = 0;
 
 	playlists.forEach( p => {
-		// r = await queryPlaylist(p, query)
 		queryPlaylist(p, query)
 		.then( r => {
-			// if(r.length > 0){
-				// rCount += r.length;
-				// console.log(rCount); 
-				// updateDisplay("tracksListTitle", rCount + " Match query.");
-				// console.log(r)
-				// displayAppend(r);
-			// }
 			move("playlists", ++pCount, playlists.length)
-		
 		})
 
 	})
@@ -495,11 +467,8 @@ function findTracks(tracks, playlists){
 
 	let pCount = 0;
 	playlists.forEach(p => {
-		// if (p.name.toUpperCase() == "XTHIS") {return;}
 		requestPlaylistTracks(p)
 		.then(pT => {
-			// console.log(pT)
-			// pT = pT.map(t => {/*console.log(t);*/ return t.track})
 			let r = filterTracks(pT, tracks)
 			rCount += r.length
 			updateDisplay("playlistLog", `${p.name} ${p.id} ${r.length}`)
@@ -531,13 +500,9 @@ function displayPlaylists(playlists){
 	list.innerHTML = "";
 
 	playlists.forEach(function(p) {
-		// let div = document.createElement("div");
 		let div = document.createElement("li")
-		// text 	= `<strong>${t.name}</strong><br/>${t.artists[0].name}<br/>${t.playlist.name}\n`
 		
 		let button = document.createElement("button");
-		// let button = document.createElement("li");
-		// let ptext = p.name + " - " + p.owner.id;
 		let ptext = `<strong>${p.name}</strong><br/>${p.owner.id}`;
 		button.className = "w3-button w3-round-large w3-block w3-left-align w3-grey"
 		button.innerHTML = ptext;
@@ -546,7 +511,6 @@ function displayPlaylists(playlists){
 
 		div.append(button);
 		list.append(div);
-		// list.append(button);
 	})
 
 }
@@ -565,33 +529,6 @@ async function viewPlaylist() {
 	console.log("found playlist Tracks to view. Now display...");
 	displayAppend(playlistTracks);
 }
-
-// function displayTracks(tracks, source=""){
-// 	console.log("Display tracks:")
-// 	console.log(tracks);
-
-// 	updateDisplay("tracksListTitle", tracks.length + " Match query.");
-	
-// 	let list = document.getElementById("tracksList");
-// 	list.innerHTML = "";
-
-// 	tracks.forEach(t => {
-// 		if (typeof t === 'undefined') return;
-// 		if(t.added_at) t = t.track
-// 		console.log(t);
-// 		div = document.createElement("div");
-// 		text 	= `${t.name} - ${t.artists[0].name} in ${t.playlist.name}\n`;
-// 		if (t.inPlaylists) {
-// 			text += ` In Playlists: ${t.playlist.name}\n`;
-// 		}
-
-// 		div.className = "trackItem";
-// 		div.id = t.id;
-
-// 		div.innerText = text;
-// 		list.append(div);
-// 	})
-// }
 
 //TODO update to react
 /* Updates a display list realtime.
@@ -624,19 +561,15 @@ function displayAppend(tracks) {
 }
 
 function move(label, count, total) {
-	// console.log(label, count, total)
   var elem = document.getElementById("progressBar");   
   var width = 0;
   var id = setInterval(frame, 100);
   function frame() {
     if (width >= 100) {
       clearInterval(id);
-      // document.getElementById("myP").className = "w3-text-green w3-animate-opacity";
-      // document.getElementById("myP").innerHTML = "Successfully uploaded 10 photos!";
       elem.innerHTML = "Checked all " + count + " " + label;
     } else {
     	while(width < (count/total)*100){
-    		// console.log(count/total)
 	      width++; 
 	      elem.style.width = width + '%'; 
 	      var num = width * 1 / 10;
