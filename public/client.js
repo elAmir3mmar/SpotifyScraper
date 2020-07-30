@@ -426,13 +426,11 @@ async function queryPlaylist(p, query) {
 		name = t.name.toUpperCase();
 		if(name.indexOf(query) !== -1){
 			console.log(`found ${name} in ${p.name}`)
-			// t.playlist = p
-			// results.push(t)
-			// rCount = rCount + 1
+
 			let rCount = document.getElementById("tracksList")
 				.getElementsByClassName("trackItem")
 				.length;
-			console.log(rCount)
+
 			updateDisplay("tracksListTitle", `${rCount+1} tracks found...`);
 			displayAppend([t])
 		}
