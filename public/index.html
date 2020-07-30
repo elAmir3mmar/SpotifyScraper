@@ -1,143 +1,144 @@
 <!DOCTYPE html>
 <html class="no-js" lang="">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>SpotiFind</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <link rel="manifest" href="site.webmanifest"> -->
-
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-    <link rel="stylesheet" href="/main.css" />
-  </head>
-  <body>
-    <!--[if lte IE 9]>
-      <p class="browserupgrade">
-        You are using an <strong>outdated</strong> browser. Please
-        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
-        your experience and security.
-      </p>
-    <![endif]-->
-    <div id="loader" class="w3-row w3-padding w3-twothird w3-center center">
-      <h1>SpotiFind</h1>
-      <a href="/login" class="w3-button w3-full w3-round-large" id="login">Login</a>
-      <p class="intro">
-        Spotifind lets you search for tracks within your spotify playlists. <br> 
-        Please login to load your playlists.
-      </p>
-    </div>
-    <div class="w3-row w3-padding" id="buttons" style="display: none;">
-      <h1>SpotiFind</h1>
-      <p class="intro">
-        Search for a Playlist in your library. Or find a track in your playlists.<br> 
-        You can filter playlists to view only the ones you own.
-      </p>
-      
-      <div class="w3-half w3-padding">
-        <div class="w3-row">
-          <input
-            type="search"
-            id="filterInput"
-            name="q-playlists"
-            class="w3-input w3-border w3-round-large w3-twothird"
-            placeholder="Playlist Name"
-            aria-label="Filter the playlists by text."
-          />
-          <a
-            href="#"
-            class="w3-button w3-right w3-third w3-round-large"
-            id="filterPlaylists"
-            >Filter Playlists</a
-          >
-          <a
-            href="#"
-            class="w3-button w3-right w3-third w3-round-large"
-            id="clear"
-            >Clear Filter</a
-          >
-        </div>
-        <div class="w3-row w3-third w3-right">
-          <!-- Rounded switch -->
-          <p style="display: inline; text-align: right;">My Playlists Only</p>
-          <label class="switch">
-            <input id="toggleShow" type="checkbox" checked />
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-      <div class="w3-half w3-padding">
-        <input
-          type="search"
-          id="searchInput"
-          name="q-tracks"
-          class="w3-input w3-border w3-round-large w3-twothird"
-          placeholder="Track Name"
-        />
-        <a
-          href="#"
-          class="w3-button w3-right w3-third w3-round-large"
-          id="searchTracks"
-          >Search For Track</a
-        >
-
-        <a
-          href="#"
-          class="w3-button w3-round-large"
-          id="remX"
-          style="display: none;"
-        >
-          Remove xTracks
-        </a>
-      </div>
-    </div>
-    <!-- END class="w3-row" id="buttons" -->
-
-    <div id="body" style="display: none">
-      <div class="w3-row w3-padding" id="lists">
-        <div id="playlistsColumn" class="w3-half w3-padding">
-          <div class="w3-row w3-padding">
-            <h2 id="playlistTitle" style="display: inline">Playlists</h2>
-          </div>
-          <div id="playlistsList" class="lister"></div>
-          <p class="log" id="playlistLog"></p>
-        </div>
-        <div id="tracksColumn" class="w3-half w3-padding">
-          <h2 id="tracksListTitle">Tracks</h2>
-          <div id="tracksListDiv" class="lister">
-          <ul id="tracksList" class="w3-ul w3-hoverable">
-            <p>
-              Select a playlist to display its tracks <br />or search for a
-              track above.
-            </p>
-          </ul>
-          </div>
-          <p class="log" id="tracklistLog"></p>
-        </div>
-      </div>
-      <!-- END class class="w3-row w3-padding" id="lists"      -->
-      <div class="w3-row w3-padding w3-round-large" id="progress-footer">
-        <div class="w3-light-grey pbarContainer">
-          <div
-            id="progressBar"
-            class="w3-container w3-center pbar"
-            style="width:0%"
-          >
-            0%
-          </div>
-        </div>
-        <a href="#" class="w3-button-small w3-align-right" id="clearCookies">
-          Clear Cookies
-        </a>
-      </div>
-      <!-- END class="w3-row w3-padding" id="progress-footer"      -->
-    </div>
-    <!-- END id="body" -->
-    <script src="./bundle.js" charset="utf-8"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.min.js"
-      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-      crossorigin="anonymous"
-    ></script>
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="x-ua-compatible" content="ie=edge" />
+		<title>SpotiFind</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- <link rel="manifest" href="site.webmanifest"> -->
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+		<link rel="stylesheet" href="/main.css" />
+	</head>
+	<body>
+		<!--[if lte IE 9]>
+		<p class="browserupgrade">
+				You are using an <strong>outdated</strong> browser. Please
+				<a href="https://browsehappy.com/">upgrade your browser</a> to improve
+				your experience and security.
+		</p>
+		<![endif]-->
+		<div id="loader" class="w3-row w3-padding w3-twothird w3-center center">
+			<h1>SpotiFind</h1>
+			<a href="/login" class="w3-button w3-full w3-round-large" id="login">Login</a>
+			<p class="intro">
+				Spotifind lets you search for tracks within your spotify playlists. <br>
+				Please login to load your playlists.
+			</p>
+		</div>
+		<div class="w3-row w3-padding" id="buttons" style="display: none;">
+			<h1>SpotiFind</h1>
+			<p class="intro">
+				Search for a Playlist in your library. Or find a track in your playlists.<br>
+				You can filter playlists to view only the ones you own.
+			</p>
+			
+			<div class="w3-half w3-padding">
+				<div class="w3-row">
+					<input
+					type="search"
+					id="filterInput"
+					name="q-playlists"
+					class="w3-input w3-border w3-round-large w3-twothird"
+					placeholder="Playlist Name"
+					aria-label="Filter the playlists by text."
+					/>
+					<a
+						href="#"
+						class="w3-button w3-right w3-third w3-round-large"
+						id="filterPlaylists"
+					>Filter Playlists</a
+					>
+					<a
+						href="#"
+						class="w3-button w3-right w3-third w3-round-large"
+						id="clear"
+					>Clear Filter</a
+					>
+				</div>
+				<div class="w3-row w3-third w3-right">
+					<!-- Rounded switch -->
+					<p style="display: inline; text-align: right;">My Playlists Only</p>
+					<label class="switch">
+						<input id="toggleShow" type="checkbox" checked />
+						<span class="slider round"></span>
+					</label>
+				</div>
+			</div>
+			<div class="w3-half w3-padding">
+				<input
+				type="search"
+				id="searchInput"
+				name="q-tracks"
+				class="w3-input w3-border w3-round-large w3-twothird"
+				placeholder="Track Name"
+				/>
+				<a
+					href="#"
+					class="w3-button w3-right w3-third w3-round-large"
+					id="searchTracks"
+				>Search For Track</a
+				>
+				<a
+					href="#"
+					class="w3-button w3-round-large"
+					id="remX"
+					style="display: none;"
+					>
+					Remove xTracks
+				</a>
+			</div>
+		</div>
+		<!-- END class="w3-row" id="buttons" -->
+		<div id="body" style="display: none">
+			<div class="w3-row w3-padding" id="lists">
+				
+				<div id="playlistsColumn" class="w3-half w3-padding">
+					<h2 id="playlistTitle" style="display: inline">Playlists</h2>
+					<div id="playlistsListDiv" class="lister">
+						<ul id="playlistsList" class="w3-ul">
+						</ul>
+					</div>
+					<p class="log" id="playlistLog"></p>
+				</div>
+				<div id="tracksColumn" class="w3-half w3-padding">
+					<h2 id="tracksListTitle">Tracks</h2>
+					<div id="tracksListDiv" class="lister">
+						<ul id="tracksList" class="w3-ul w3-hoverable">
+							<p>
+								Select a playlist to display its tracks <br />or search for a
+								track above.
+							</p>
+						</ul>
+					</div>
+					<p class="log" id="tracklistLog"></p>
+				</div>
+				
+			</div>
+			<!-- END class class="w3-row w3-padding" id="lists"      -->
+		</div>
+		<div class="w3-row w3-padding w3-round-large" id="progress-footer">
+			<div class="w3-light-grey pbarContainer">
+				<div
+					id="progressBar"
+					class="w3-container w3-center pbar"
+					style="width:0%"
+					>
+					0%
+				</div>
+			</div>
+			<a href="#" class="w3-button-small w3-align-right" id="clearCookies">
+				Clear Cookies
+			</a>
+		</div>
+		<!-- END class="w3-row w3-padding" id="progress-footer"      -->
+	</div>
+	<!-- END id="body" -->
+	<script src="./bundle.js" charset="utf-8"></script>
+	<script
+	src="https://code.jquery.com/jquery-3.2.1.min.js"
+	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	crossorigin="anonymous"
+	></script>
+</body>
 </html>

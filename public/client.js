@@ -531,16 +531,22 @@ function displayPlaylists(playlists){
 	list.innerHTML = "";
 
 	playlists.forEach(function(p) {
-		let div = document.createElement("div");
+		// let div = document.createElement("div");
+		let div = document.createElement("li")
+		// text 	= `<strong>${t.name}</strong><br/>${t.artists[0].name}<br/>${t.playlist.name}\n`
 		
 		let button = document.createElement("button");
-		let ptext = p.name + " - " + p.owner.id;
-		button.innerText = ptext;
+		// let button = document.createElement("li");
+		// let ptext = p.name + " - " + p.owner.id;
+		let ptext = `<strong>${p.name}</strong><br/>${p.owner.id}`;
+		button.className = "w3-button w3-round-large w3-block w3-left-align w3-grey"
+		button.innerHTML = ptext;
 		button.id = p.id;
 		button.onclick = viewPlaylist;
 
 		div.append(button);
 		list.append(div);
+		// list.append(button);
 	})
 
 }
