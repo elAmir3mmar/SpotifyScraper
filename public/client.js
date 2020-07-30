@@ -455,7 +455,7 @@ async function queryPlaylist(p, query) {
 			console.log(`found ${name} in ${p.name}`)
 			// t.playlist = p
 			// results.push(t)
-			updateDisplay("tracksListTitle", ++rCount + " Match query.");
+			updateDisplay("tracksListTitle", ++rCount + " Match query");
 			displayAppend([t])
 
 		}
@@ -595,20 +595,22 @@ function displayAppend(tracks) {
 	let destination="tracksList";
 	let list = document.getElementById(destination);
 
-	updateDisplay("tracksListTitle", tracks.length + " Match query.");
+	updateDisplay("tracksListTitle", tracks.length + " Match query");
 
 	tracks.forEach( t => {
 		if (typeof t === 'undefined') return;
 		if(t.added_at) t = t.track
 		console.log(t)
-		div = document.createElement("div");
-		text 	= `${t.name}, ${t.artists[0].name}, ${t.playlist.name}\n`;
+
+		div = document.createElement("li")
 		div.className = "trackItem";
+
+		text 	= `<strong>${t.name}</strong><br/>${t.artists[0].name}<br/>${t.playlist.name}\n`;
 		div.id = t.id;
 		div.data = t;
 		div.dataset.playlistId = t.playlist.id;
 		div.dataset.playlistName = t.playlist.name;
-		div.innerText = text;
+		div.innerHTML = text;
 		div.onclick = function(){console.log(this.data)}
 		list.append(div);	
 		div.scrollIntoView({behavior: "smooth"});
