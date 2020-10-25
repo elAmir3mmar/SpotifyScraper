@@ -26,5 +26,5 @@ then:
 	nodemon server.js
 
 go to:
-http://192.168.2.43:8888/
+http://localhost:8888/
 
