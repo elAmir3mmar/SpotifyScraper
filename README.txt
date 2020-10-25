@@ -23,7 +23,7 @@ Web Files:
 Start:
 	browserify ./public/client.js>./public/bundle.js
 then:
-	ndoemon server.js
+	nodemon server.js
 
 go to:
 http://192.168.2.43:8888/
